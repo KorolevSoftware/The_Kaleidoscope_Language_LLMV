@@ -37,6 +37,7 @@ struct Tokenizer {
 	Token get_token();
 	Token get_token_next();
 private:
+	int index = 0;
 	std::vector<Token> tokens;
 	std::vector<Token>::iterator begin;
 };

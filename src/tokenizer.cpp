@@ -47,9 +47,9 @@ namespace { // private
 
 	std::vector<TokenPair> parsers = {
 	   { Tokenizer::TokenType::Def, std::bind(word_to_token, Tokenizer::TokenType::Def, "def", std::placeholders::_1) },
-	   { Tokenizer::TokenType::Extern, std::bind(word_to_token, Tokenizer::TokenType::Extern, "def", std::placeholders::_1) },
+	   { Tokenizer::TokenType::Extern, std::bind(word_to_token, Tokenizer::TokenType::Extern, "extern", std::placeholders::_1) },
 	   { Tokenizer::TokenType::RBOpen, std::bind(word_to_token, Tokenizer::TokenType::RBOpen, "(", std::placeholders::_1) },
-	   { Tokenizer::TokenType::RBClose, std::bind(word_to_token, Tokenizer::TokenType::RBOpen, ")", std::placeholders::_1) },
+	   { Tokenizer::TokenType::RBClose, std::bind(word_to_token, Tokenizer::TokenType::RBClose, ")", std::placeholders::_1) },
 	   { Tokenizer::TokenType::Plus, std::bind(word_to_token, Tokenizer::TokenType::Plus, "+", std::placeholders::_1) },
 	   { Tokenizer::TokenType::Minus, std::bind(word_to_token, Tokenizer::TokenType::Minus, "-", std::placeholders::_1) },
 	   { Tokenizer::TokenType::Div, std::bind(word_to_token, Tokenizer::TokenType::Div, "/", std::placeholders::_1) },
@@ -67,9 +67,9 @@ namespace { // private
 
 Tokenizer::Tokenizer(std::string from_parse) {
 	// Phase 1 text clean
-	std::string ready_from_split = std::regex_replace(from_parse, std::regex(R"([()+-/*,])"), " $& "); // add space 
+	std::string ready_from_split = std::regex_replace(from_parse, std::regex(R"([()+\-*])"), " $& "); // add space 
 	std::vector words = split(ready_from_split, R"(\s+)");// space char one and more
-	
+
 	// Phase 2 text to tokens
 	tokens.resize(words.size());
 	std::transform(std::execution::par, words.begin(), words.end(), tokens.begin(), // make tokens from words
@@ -96,6 +96,7 @@ Tokenizer::Token Tokenizer::get_token_preview() {
 }
 
 Tokenizer::Token Tokenizer::get_token() {
+	index++;
 	if (begin != tokens.end())
 		return *begin++;
 
